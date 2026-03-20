@@ -78,7 +78,7 @@ class LynqUpdatesPage extends StatelessWidget {
                       : null,
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                const Text( 
                   'Version 3.0',
                   style: TextStyle(
                     fontSize: 16,
