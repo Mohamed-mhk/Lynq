@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AppearancePage extends StatefulWidget {
   const AppearancePage({super.key});
@@ -37,7 +38,7 @@ class _AppearancePageState extends State<AppearancePage> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
         ),
@@ -58,6 +59,7 @@ class _AppearancePageState extends State<AppearancePage> {
             _buildClickableRow(
               icon: Icons.palette_outlined,
               title: 'App Theme',
+              onTap: () => context.push('/theme'),
             ),
             const SizedBox(height: 16),
             Container(
@@ -90,44 +92,49 @@ class _AppearancePageState extends State<AppearancePage> {
                   ),
                   const SizedBox(height: 16),
                   _buildSwitchRow('Large', isLarge, (val) {
+                    if (!val) return;
                     setState(() {
-                      isLarge = val;
-                      if (val) {
-                        isMedium = false;
-                        isSmall = false;
-                      }
+                      isLarge = true;
+                      isMedium = false;
+                      isSmall = false;
                     });
                   }),
                   _buildSwitchRow('Medium', isMedium, (val) {
+                    if (!val) return;
                     setState(() {
-                      isMedium = val;
-                      if (val) {
-                        isLarge = false;
-                        isSmall = false;
-                      }
+                      isLarge = false;
+                      isMedium = true;
+                      isSmall = false;
                     });
                   }),
                   _buildSwitchRow('small', isSmall, (val) {
+                    if (!val) return;
                     setState(() {
-                      isSmall = val;
-                      if (val) {
-                        isLarge = false;
-                        isMedium = false;
-                      }
+                      isLarge = false;
+                      isMedium = false;
+                      isSmall = true;
                     });
                   }),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            _buildClickableRow(icon: Icons.palette_outlined, title: 'View'),
+            _buildClickableRow(
+              icon: Icons.palette_outlined,
+              title: 'View',
+              onTap: () => context.push('/view'),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildClickableRow({required IconData icon, required String title}) {
+  Widget _buildClickableRow({
+    required IconData icon,
+    required String title,
+    VoidCallback? onTap,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8F9FA),
@@ -137,7 +144,7 @@ class _AppearancePageState extends State<AppearancePage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {},
+          onTap: onTap ?? () {},
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 20.0,

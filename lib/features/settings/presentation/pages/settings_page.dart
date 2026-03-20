@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'account_page.dart';
-import 'appearance_page.dart';
-import 'languages_page.dart';
-import 'lynq_updates_page.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -83,28 +79,19 @@ class SettingsPage extends StatelessWidget {
                   _buildSettingsItem(
                     icon: Icons.person_outline,
                     title: 'Account',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AccountPage()),
-                    ),
+                    onTap: () => context.push('/account'),
                   ),
                   _buildDivider(),
                   _buildSettingsItem(
                     icon: Icons.palette_outlined,
                     title: 'Appearance',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AppearancePage()),
-                    ),
+                    onTap: () => context.push('/appearance'),
                   ),
                   _buildDivider(),
                   _buildSettingsItem(
                     icon: Icons.language,
                     title: 'Languages',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LanguagesPage()),
-                    ),
+                    onTap: () => context.push('/languages'),
                   ),
                   _buildDivider(),
                   _buildSettingsItem(
@@ -121,12 +108,7 @@ class SettingsPage extends StatelessWidget {
                     icon: Icons.auto_awesome,
                     title: 'Lynq Updates',
                     showDivider: false,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const LynqUpdatesPage(),
-                      ),
-                    ),
+                    onTap: () => context.push('/lynq-updates'),
                   ),
                 ],
               ),

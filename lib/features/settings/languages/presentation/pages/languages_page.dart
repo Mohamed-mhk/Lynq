@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LanguagesPage extends StatefulWidget {
   const LanguagesPage({super.key});
@@ -37,7 +38,7 @@ class _LanguagesPageState extends State<LanguagesPage> {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
         ),
@@ -83,18 +84,27 @@ class _LanguagesPageState extends State<LanguagesPage> {
               ),
               const SizedBox(height: 16),
               _buildSwitchRow('Arabic', isArabic, (val) {
+                if (!val) return;
                 setState(() {
-                  isArabic = val;
+                  isArabic = true;
+                  isEnglish = false;
+                  isSmall = false;
                 });
               }),
               _buildSwitchRow('English', isEnglish, (val) {
+                if (!val) return;
                 setState(() {
-                  isEnglish = val;
+                  isArabic = false;
+                  isEnglish = true;
+                  isSmall = false;
                 });
               }),
               _buildSwitchRow('small', isSmall, (val) {
+                if (!val) return;
                 setState(() {
-                  isSmall = val;
+                  isArabic = false;
+                  isEnglish = false;
+                  isSmall = true;
                 });
               }),
             ],

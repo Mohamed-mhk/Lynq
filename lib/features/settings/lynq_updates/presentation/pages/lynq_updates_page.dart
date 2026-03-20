@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LynqUpdatesPage extends StatelessWidget {
   const LynqUpdatesPage({super.key});
@@ -28,7 +29,7 @@ class LynqUpdatesPage extends StatelessWidget {
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
         ),
@@ -78,7 +79,7 @@ class LynqUpdatesPage extends StatelessWidget {
                       : null,
                 ),
                 const SizedBox(height: 16),
-                const Text( 
+                const Text(
                   'Version 3.0',
                   style: TextStyle(
                     fontSize: 16,
