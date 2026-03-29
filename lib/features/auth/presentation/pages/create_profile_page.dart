@@ -18,17 +18,66 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
+  late final ValueNotifier<bool> _isFormValid;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFormValid = ValueNotifier<bool>(false);
+
+    void validateForm() {
+      _isFormValid.value = _fullNameController.text.isNotEmpty && _usernameController.text.isNotEmpty;
+    }
+
+    _fullNameController.addListener(validateForm);
+    _usernameController.addListener(validateForm);
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _usernameController.dispose();
+    _isFormValid.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 72,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 24.0, top: 4.0, bottom: 4.0),
+          child: GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, 2),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.arrow_back, color: Colors.black, size: 24),
+            ),
+          ),
         ),
         title: const Text(
-          'Create Your Profile',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Create your profile',
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         centerTitle: true,
       ),
@@ -47,158 +96,252 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
           }
         },
         builder: (context, state) {
+          final bottomPadding = MediaQuery.of(context).padding.bottom;
+
           return SafeArea(
-            child: SingleChildScrollView(
+            bottom: false,
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 8),
-                  const Text(
-                    'This Information Will Appear On Your Account',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                   const SizedBox(height: 32),
-                  // Profile Image Placeholder
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(0, 58, 248, 1),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromRGBO(0, 58, 248, 0.5),
-                              blurRadius: 20,
-                              spreadRadius: 5,
+                  
+                  // Avatar Section
+                  Center(
+                    child: Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              width: 96,
+                              height: 96,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF0F36FA), // Deep vibrant blue
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2), // Lighter circle inside
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(Icons.image_outlined, color: Colors.white, size: 24),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.edit_outlined, color: Colors.black, size: 16),
+                              ),
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.photo_library,
-                            color: Colors.white,
-                            size: 32,
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Choose a photo',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1E293B),
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 4),
-                          ],
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Make a great first impression',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5B30CA), // Purple color
+                          ),
                         ),
-                        child: const Icon(Icons.edit, size: 20),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 48),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Full Name',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
+                      ],
                     ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Inputs Section
+                  // Full name
+                  const Text(
+                    'Full name',
+                    style: TextStyle(fontSize: 14, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _fullNameController,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
-                      hintText: 'Mohamad Ayad',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.cancel, color: Colors.grey),
-                        onPressed: () => _fullNameController.clear(),
+                      hintText: 'example',
+                      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                      filled: true,
+                      fillColor: const Color(0xFFFAFAFA),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFF94A3B8)),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Choose Your Username',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                  const SizedBox(height: 4),
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: Text('30', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.w600)),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Username
+                  const Text(
+                    'Username',
+                    style: TextStyle(fontSize: 14, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(hintText: '@example_21'),
-                  ),
-                  const SizedBox(height: 8),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '3-20 characters letters, numbers, underscores',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Display validation status manually for now
-                  const Row(
-                    children: [
-                      Icon(Icons.close, color: Colors.red, size: 16),
-                      SizedBox(width: 8),
-                      Text(
-                        'Username Already Taken',
-                        style: TextStyle(color: Colors.red),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      hintText: '@example_21',
+                      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                      filled: true,
+                      fillColor: const Color(0xFFFAFAFA),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
                       ),
-                    ],
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Color(0xFF94A3B8)),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  const Row(
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: Text('20', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.w600)),
+                  ),
+
+                  const Spacer(),
+              
+                  // Bottom Term text
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check, color: Colors.orange, size: 16),
-                      SizedBox(width: 8),
-                      Text(
-                        'Username Available',
-                        style: TextStyle(color: Colors.orange),
-                      ),
+                      _buildLinkText('Terms of us'),
+                      const Text(' . ', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                      _buildLinkText('Privacy Policy'),
                     ],
                   ),
-                  const SizedBox(height: 48),
-                  if (state is AuthLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_fullNameController.text.isNotEmpty &&
-                            _usernameController.text.isNotEmpty) {
-                          context.read<AuthBloc>().add(
-                            CreateProfileRequested(
-                              email: widget.email,
-                              fullName: _fullNameController.text,
-                              username: _usernameController.text,
+                  const SizedBox(height: 16),
+
+                  // Finish Button
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _isFormValid,
+                    builder: (context, isValid, child) {
+                      final isLoading = state is AuthLoading;
+                      final btnColor = isValid ? Colors.black : const Color(0xFF808080);
+
+                      return SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: (isValid && !isLoading)
+                              ? () {
+                                  FocusScope.of(context).unfocus();
+                                  context.read<AuthBloc>().add(
+                                    CreateProfileRequested(
+                                      email: widget.email,
+                                      fullName: _fullNameController.text,
+                                      username: _usernameController.text,
+                                    ),
+                                  );
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: btnColor,
+                            disabledBackgroundColor: btnColor,
+                            foregroundColor: Colors.white,
+                            disabledForegroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28),
                             ),
-                          );
-                        }
-                      },
-                      child: const Text('Finish'),
-                    ),
-                  const SizedBox(height: 48),
-                ],
-              ),
-            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (isLoading) ...[
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                              ],
+                              const Text(
+                                'Finish',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (!isLoading) ...[
+                                const SizedBox(width: 8),
+                                const Icon(Icons.check, size: 20),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: bottomPadding > 0 ? bottomPadding : 24),
+                ]
+              )
+            )
           );
-        },
+        }
+      )
+    );
+  }
+
+  Widget _buildLinkText(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Color(0xFF475569), // slate-600
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        decoration: TextDecoration.underline,
+        decorationColor: Color(0xFF475569),
       ),
     );
   }
 }
+

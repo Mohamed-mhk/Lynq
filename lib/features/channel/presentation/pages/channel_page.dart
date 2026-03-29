@@ -9,12 +9,41 @@ class ChannelPage extends StatefulWidget {
 
 class _ChannelPageState extends State<ChannelPage> {
   bool _showGridMenu = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Handled keyboard visibility independently to allow overlapping
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
+    final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    final double menuHeight = _showGridMenu ? 260.0 + bottomPadding : bottomPadding;
+    final double spacerHeight = bottomInset > menuHeight ? bottomInset : menuHeight;
+
+    return PopScope(
+      canPop: !_showGridMenu,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        if (_showGridMenu) {
+          setState(() {
+            _showGridMenu = false;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFAFAFA),
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
         backgroundColor: const Color(0xFFFAFAFA),
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -104,11 +133,14 @@ class _ChannelPageState extends State<ChannelPage> {
         ],
       ),
       body: SafeArea(
-        child: Column(
+        bottom: false,
+        child: Stack(
           children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(24.0),
+            Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(24.0),
                 children: [
                   // Message 1 (Text)
                   _buildMessageRow(
@@ -268,9 +300,18 @@ class _ChannelPageState extends State<ChannelPage> {
                   _buildIconButton(
                     Icons.grid_view_rounded, 
                     onTap: () {
-                      setState(() {
-                        _showGridMenu = !_showGridMenu;
-                      });
+                      if (_focusNode.hasFocus) {
+                        _focusNode.unfocus();
+                        if (!_showGridMenu) {
+                          setState(() {
+                            _showGridMenu = true;
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          _showGridMenu = !_showGridMenu;
+                        });
+                      }
                     }
                   ),
                   const SizedBox(width: 8),
@@ -288,6 +329,7 @@ class _ChannelPageState extends State<ChannelPage> {
                         children: [
                           Expanded(
                             child: TextField(
+                              focusNode: _focusNode,
                               decoration: InputDecoration(
                                 hintText: 'Create Content',
                                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
@@ -332,16 +374,33 @@ class _ChannelPageState extends State<ChannelPage> {
               ),
             ),
 
-            // Expanding Menu
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.fastOutSlowIn,
-              child: _showGridMenu ? _buildGridMenu() : const SizedBox.shrink(),
+                // Bottom spacer for Keyboard/Menu
+                AnimatedContainer(
+                  duration: Duration(milliseconds: bottomInset > 0 ? 0 : 250),
+                  curve: Curves.easeOutCubic,
+                  height: spacerHeight,
+                ),
+              ],
+            ),
+
+            // Fixed Grid Menu positioned under the keyboard
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottomPadding,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 250),
+                opacity: _showGridMenu ? 1.0 : 0.0,
+                child: IgnorePointer(
+                  ignoring: !_showGridMenu,
+                  child: _buildGridMenu(),
+                ),
+              ),
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildMessageRow({String? title, required Widget child}) {
@@ -427,8 +486,9 @@ class _ChannelPageState extends State<ChannelPage> {
     );
   }
 
-  Widget _buildGridMenu() {
+  static Widget _buildGridMenu() {
     return Container(
+      height: 260,
       color: const Color(0xFFFAFAFA),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
@@ -463,7 +523,7 @@ class _ChannelPageState extends State<ChannelPage> {
     );
   }
 
-  Widget _buildMenuButton(String text, {bool isFullWidth = false}) {
+  static Widget _buildMenuButton(String text, {bool isFullWidth = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
