@@ -14,7 +14,7 @@ import '../../features/settings/appearance/presentation/pages/view_page.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/welcome',
+    initialLocation: '/home',
     routes: [
       GoRoute(
         path: '/welcome', //that's was intial location

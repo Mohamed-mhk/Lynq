@@ -141,7 +141,7 @@ class WelcomePage extends StatelessWidget {
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.white.withOpacity(0.85),
-      transitionDuration: const Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
         return Center(
           child: Material(
@@ -174,12 +174,7 @@ class WelcomePage extends StatelessWidget {
             parent: animation,
             curve: Curves.easeOutQuint, // Energetic deceleration
           )),
-          child: FadeTransition(
-            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(parent: animation, curve: Curves.easeOut),
-            ),
-            child: child,
-          ),
+          child: child,
         );
       },
     );

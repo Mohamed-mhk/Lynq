@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'channel_info_page.dart';
 
 class ChannelPage extends StatefulWidget {
   const ChannelPage({super.key});
@@ -68,41 +69,50 @@ class _ChannelPageState extends State<ChannelPage> {
             ),
           ),
         ),
-        title: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.blue.shade800,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Icon(Icons.settings, color: Colors.cyanAccent, size: 20),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Cossthub',
-                  style: TextStyle(
-                    color: Color(0xFF1E293B),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChannelInfoPage()),
+            );
+          },
+          behavior: HitTestBehavior.opaque,
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade800,
+                  shape: BoxShape.circle,
                 ),
-                Text(
-                  '792 subscribers',
-                  style: TextStyle(
-                    color: Color(0xFF64748B),
-                    fontSize: 12,
-                  ),
+                child: const Center(
+                  child: Icon(Icons.settings, color: Colors.cyanAccent, size: 20),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Cossthub',
+                    style: TextStyle(
+                      color: Color(0xFF1E293B),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    '792 subscribers',
+                    style: TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         actions: [
           Padding(
