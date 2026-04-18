@@ -11,6 +11,9 @@ import '../../features/settings/languages/presentation/pages/languages_page.dart
 import '../../features/settings/lynq_updates/presentation/pages/lynq_updates_page.dart';
 import '../../features/settings/appearance/presentation/pages/theme_page.dart';
 import '../../features/settings/appearance/presentation/pages/view_page.dart';
+import '../../features/settings/supports/presentation/pages/supports_page.dart';
+import '../../features/settings/account/presentation/pages/change_email_page.dart';
+import '../../features/settings/account/presentation/pages/verify_account_email_page.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -57,6 +60,21 @@ class AppRouter {
       ),
       GoRoute(path: '/theme', builder: (context, state) => const ThemePage()),
       GoRoute(path: '/view', builder: (context, state) => const ViewPage()),
+      GoRoute(
+        path: '/supports',
+        builder: (context, state) => const SupportsPage(),
+      ),
+      GoRoute(
+        path: '/change-account-email',
+        builder: (context, state) => const ChangeEmailPage(),
+      ),
+      GoRoute(
+        path: '/verify-account-email',
+        builder: (context, state) {
+          final String email = state.extra as String? ?? 'moahamadayad122@email.com';
+          return VerifyAccountEmailPage(email: email);
+        },
+      ),
     ],
   );
 }

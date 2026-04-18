@@ -15,6 +15,19 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   bool _isDrawerOpen = false;
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _handleDrawerChanged(bool isOpen) {
     if (_isDrawerOpen != isOpen) {
@@ -31,8 +44,14 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          IndexedStack(
-            index: _currentIndex,
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
             children: [
               HomeContent(onDrawerChanged: _handleDrawerChanged),
               const SettingsPage(),
@@ -48,43 +67,72 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: Container(
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(32),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 15,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildNavItem(
-                        icon: Icons.home_filled,
-                        label: 'Home',
-                        index: 0,
-                        isSelected: _currentIndex == 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.drag_handle, color: Colors.black, size: 32),
+                        onPressed: () {
+                          // TODO: implement drawer open if desired here
+                        },
                       ),
-                      _buildNavItem(
-                        icon: Icons.settings_outlined,
-                        label: 'Settings',
-                        index: 1,
-                        isSelected: _currentIndex == 1,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Container(
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildNavItem(
+                              icon: Icons.home_filled,
+                              label: 'Home',
+                              index: 0,
+                              isSelected: _currentIndex == 0,
+                            ),
+                            _buildNavItem(
+                              assetImagePath: 'assets/settings_icon.png',
+                              label: 'Settings',
+                              index: 1,
+                              isSelected: _currentIndex == 1,
+                            ),
+                            _buildNavItem(
+                              imageUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80',
+                              label: 'Profile',
+                              index: 2,
+                              isSelected: _currentIndex == 2,
+                            ),
+                          ],
+                        ),
                       ),
-                      _buildNavItem(
-                        icon: Icons.account_circle_outlined,
-                        label: 'Profile',
-                        index: 2,
-                        isSelected: _currentIndex == 2,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -95,36 +143,72 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNavItem({
-    required IconData icon,
+    IconData? icon,
+    String? imageUrl,
+    String? assetImagePath,
     required String label,
     required int index,
     required bool isSelected,
   }) {
+    final Color itemColor = isSelected ? Colors.black : const Color(0xFFC2C2C2);
+    
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
+        if (_currentIndex != index) {
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       },
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? Colors.black : Colors.grey[500],
-            size: 26,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected ? Colors.black : Colors.grey[500],
+      child: SizedBox(
+        width: 70, // Provide consistent width so items have tap area
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (imageUrl != null)
+              Opacity(
+                opacity: isSelected ? 1.0 : 0.4,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              )
+            else if (assetImagePath != null)
+              Opacity(
+                opacity: isSelected ? 1.0 : 0.4,
+                child: Image.asset(
+                  assetImagePath,
+                  width: 28,
+                  height: 28,
+                ),
+              )
+            else if (icon != null)
+              Icon(
+                icon,
+                color: itemColor,
+                size: 32,
+              ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: itemColor,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
