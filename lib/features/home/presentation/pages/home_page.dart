@@ -4,6 +4,7 @@ import '../../../../features/settings/presentation/pages/settings_page.dart';
 import '../../../../features/profile/presentation/pages/profile_page.dart';
 import '../../../../features/channel/presentation/pages/create_channel_page.dart';
 import '../../../../features/channel/presentation/pages/channel_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -117,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                               isSelected: _currentIndex == 0,
                             ),
                             _buildNavItem(
-                              assetImagePath: 'assets/settings_icon.png',
+                              svgIconPath: 'assets/icons/setting icon.svg',
                               label: 'Settings',
                               index: 1,
                               isSelected: _currentIndex == 1,
@@ -146,6 +147,7 @@ class _HomePageState extends State<HomePage> {
     IconData? icon,
     String? imageUrl,
     String? assetImagePath,
+    String? svgIconPath,
     required String label,
     required int index,
     required bool isSelected,
@@ -190,6 +192,16 @@ class _HomePageState extends State<HomePage> {
                   assetImagePath,
                   width: 28,
                   height: 28,
+                ),
+              )
+            else if (svgIconPath != null)
+              Opacity(
+                opacity: isSelected ? 1.0 : 0.4,
+                child: SvgPicture.asset(
+                  svgIconPath,
+                  width: 28,
+                  height: 28,
+                  colorFilter: ColorFilter.mode(itemColor, BlendMode.srcIn),
                 ),
               )
             else if (icon != null)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -82,14 +83,10 @@ class _AccountPageState extends State<AccountPage> {
               ),
               child: IconButton(
                 icon: _isSaving
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3.0,
-                          strokeCap: StrokeCap.round,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                        ),
+                    ? SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: Lottie.asset('assets/animation/grey loader circle (1).json'),
                       )
                     : const Icon(Icons.check, color: Colors.black),
                 onPressed: _handleSave,
@@ -417,3 +414,4 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 }
+

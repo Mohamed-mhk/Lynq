@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -113,14 +115,14 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                 children: [
                   _buildSettingsItem(
-                    icon: Icons.person_outline,
+                    svgIcon: 'assets/icons/userIcon.svg',
                     title: 'Account',
                     trailingWidget: const Icon(Icons.chevron_right, color: Color(0xFF64748B), size: 18),
                     onTap: () => context.push('/account'),
                   ),
                   Container(height: 2, color: Colors.white),
                   _buildSettingsItem(
-                    icon: Icons.language,
+                    svgIcon: 'assets/icons/global.svg',
                     title: 'Languages',
                     trailingWidget: const Text("English", style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w600, fontSize: 14)),
                     onTap: () => _showTopDialog(context, _buildAppLanguageDialog(context)),
@@ -148,7 +150,7 @@ class SettingsPage extends StatelessWidget {
                   _buildSettingsItem(
                     icon: Icons.palette_outlined,
                     title: 'View',
-                    trailingWidget: const Icon(Icons.chevron_right, color: Color(0xFF64748B), size: 18),
+                    trailingWidget: const Icon(Icons.chevron_right, color: Color(0xFF5a687d), size: 18),
                     onTap: () => context.push('/view'),
                   ),
                   Container(height: 2, color: Colors.white),
@@ -173,7 +175,7 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                 children: [
                   _buildSettingsItem(
-                    icon: Icons.chat_bubble_outline,
+                    svgIcon: 'assets/icons/support.svg',
                     title: 'Supports',
                     trailingWidget: const Icon(Icons.chevron_right, color: Color(0xFF64748B), size: 18),
                     onTap: () => context.push('/supports'),
@@ -186,7 +188,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   Container(height: 2, color: Colors.white),
                   _buildSettingsItem(
-                    icon: Icons.system_update_alt_outlined,
+                    svgIcon: 'assets/icons/stars.svg',
                     title: 'Lynq Updates',
                     trailingWidget: const Text("v1.0.0", style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w600, fontSize: 14)),
                   ),
@@ -202,7 +204,8 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildSettingsItem({
-    required IconData icon,
+    IconData? icon,
+    String? svgIcon,
     required String title,
     Widget? trailingWidget,
     VoidCallback? onTap,
@@ -217,7 +220,10 @@ class SettingsPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 18.0),
           child: Row(
             children: [
-              Icon(icon, color: iconColor, size: 24),
+              if (svgIcon != null)
+                SvgPicture.asset(svgIcon, colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn), width: 24, height: 24)
+              else if (icon != null)
+                Icon(icon, color: iconColor, size: 24),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
