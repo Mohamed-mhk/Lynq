@@ -12,6 +12,16 @@ class _ChannelPageState extends State<ChannelPage> {
   bool _isMenuOpen = false;
   bool _showGridMenu = false;
   bool _isEditMode = false;
+  bool _isMoveMode = false;
+  String? _currentSubMenu;
+
+  // Reorderable menu items data
+  List<Map<String, dynamic>> _rootMenuItems = [
+    {'icon': Icons.description_outlined, 'title': 'Announcements', 'subtitle': '12 posts', 'isHidden': false},
+    {'icon': Icons.grid_view_outlined, 'title': 'Study Resources', 'subtitle': '6 buttons', 'isHidden': false},
+    {'icon': Icons.link, 'title': 'Open Registration', 'subtitle': null, 'isHidden': false},
+    {'icon': Icons.description_outlined, 'title': 'FAQs', 'subtitle': '8 posts', 'isHidden': true},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -397,14 +407,171 @@ class _ChannelPageState extends State<ChannelPage> {
                   bottom: _showGridMenu ? 0 : -600,
                   left: 0,
                   right: 0,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Background layer
-                      Positioned.fill(
-                        child: Column(
+                  child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const ShapeDecoration(
+                      color: Colors.white,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0x230F1118),
+                          blurRadius: 22,
+                          offset: Offset(0, 10),
+                          spreadRadius: -10,
+                        ),
+                        BoxShadow(
+                          color: Color(0x380F1118),
+                          blurRadius: 54,
+                          offset: Offset(0, 26),
+                          spreadRadius: -20,
+                        ),
+                        BoxShadow(
+                          color: Color(0x0F0F1118),
+                          blurRadius: 0,
+                          offset: Offset(0, 0),
+                          spreadRadius: 1,
+                        )
+                      ],
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        // LAYER 2: Menu Items (Scrollable content)
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: (isDesktop ? 350 : size.height * 0.38) + 120, // accommodate buttons and list
+                        ),
+                        child: _isMoveMode && _currentSubMenu == null
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                top: 80,
+                                left: 14,
+                                right: 14,
+                                bottom: safePadding.bottom > 0 ? safePadding.bottom + 16 : 32,
+                              ),
+                              child: ReorderableListView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                buildDefaultDragHandles: false,
+                                proxyDecorator: (child, index, animation) {
+                                  return Material(
+                                    color: Colors.transparent,
+                                    elevation: 6,
+                                    shadowColor: Colors.black.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: child,
+                                  );
+                                },
+                                itemCount: _rootMenuItems.length,
+                                onReorder: (oldIndex, newIndex) {
+                                  setState(() {
+                                    if (newIndex > oldIndex) newIndex--;
+                                    final item = _rootMenuItems.removeAt(oldIndex);
+                                    _rootMenuItems.insert(newIndex, item);
+                                  });
+                                },
+                                itemBuilder: (context, index) {
+                                  final item = _rootMenuItems[index];
+                                  return Padding(
+                                    key: ValueKey(item['title']),
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: _buildMoveListItem(
+                                      item['icon'] as IconData,
+                                      item['title'] as String,
+                                      item['subtitle'] as String?,
+                                      index: index,
+                                      isHidden: item['isHidden'] as bool,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : SingleChildScrollView(
+                          padding: EdgeInsets.only(
+                            top: 80,
+                            left: 14,
+                            right: 14,
+                            bottom: safePadding.bottom > 0 ? safePadding.bottom + 16 : 32,
+                          ),
+                          physics: const BouncingScrollPhysics(),
+                          clipBehavior: Clip.hardEdge,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (Widget child, Animation<double> animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0.05, 0),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Column(
+                              key: ValueKey<String>(_currentSubMenu ?? 'root'),
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (_currentSubMenu == null) ...[
+                                  for (int i = 0; i < _rootMenuItems.length; i++) ...[
+                                    if (i > 0) const SizedBox(height: 8),
+                                    _buildMenuListItem(
+                                      _rootMenuItems[i]['icon'] as IconData,
+                                      _rootMenuItems[i]['title'] as String,
+                                      _rootMenuItems[i]['subtitle'] as String?,
+                                      isHidden: _rootMenuItems[i]['isHidden'] as bool,
+                                      onTap: () => setState(() => _currentSubMenu = _rootMenuItems[i]['title'] as String),
+                                    ),
+                                  ],
+                                ] else if (_currentSubMenu == 'Study Resources') ...[
+                                  _buildMenuListItem(Icons.book_outlined, 'Mathematics', '12 files'),
+                                  const SizedBox(height: 8),
+                                  _buildMenuListItem(Icons.science_outlined, 'Physics', '8 files'),
+                                  const SizedBox(height: 8),
+                                  _buildMenuListItem(Icons.computer_outlined, 'Computer Science', '24 files'),
+                                ] else ...[
+                                  _buildMenuListItem(Icons.folder_outlined, 'Empty Folder', '0 files'),
+                                ],
+                                if (_isEditMode && !_isMoveMode) ...[
+                                  const SizedBox(height: 8),
+                                  DottedBorder(
+                                    options: const RoundedRectDottedBorderOptions(
+                                      color: Color(0xFF7C3AED),
+                                      strokeWidth: 2.0,
+                                      dashPattern: [8, 4],
+                                      radius: Radius.circular(16),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 52,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF8FAFC),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(Icons.add, color: Color(0xFF7C3AED)),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      // LAYER 3: The Two Buttons on Top
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        child: Stack(
                           children: [
-                            // Fade effect area (ignores pointers so user can scroll chat through it!)
+                            // White fade (ignores pointer so user can scroll through the gap between buttons!)
                             IgnorePointer(
                               child: Container(
                                 height: 80,
@@ -413,145 +580,335 @@ class _ChannelPageState extends State<ChannelPage> {
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      const Color(0xFFE2E8F0).withOpacity(0.0),
-                                      const Color(0xFFE2E8F0).withOpacity(0.9),
-                                      const Color(0xFFE2E8F0),
+                                      Colors.white,
+                                      Colors.white.withOpacity(0.9),
+                                      Colors.white.withOpacity(0.0),
                                     ],
                                     stops: const [0.0, 0.6, 1.0],
                                   ),
                                 ),
                               ),
                             ),
-                            // Solid background area
-                            Expanded(
-                              child: Container(
-                                color: const Color(0xFFE2E8F0),
+                            // The actual interactive buttons
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                left: 14,
+                                right: 14,
+                                bottom: 6,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Foreground layer (interactive)
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: 40, // Fade overlaps this area
-                          left: 20,
-                          right: 20,
-                          bottom: safePadding.bottom > 0 ? safePadding.bottom + 16 : 32,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Floating buttons above the list
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Pencil button
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
-                                    ],
-                                  ),
-                                  child: IconButton(
-                                    icon: Icon(_isEditMode ? Icons.more_vert : Icons.edit_outlined, color: const Color(0xFF1E293B)),
-                                    onPressed: () {
-                                      if (!_isEditMode) {
-                                        setState(() {
-                                          _isEditMode = true;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                                // Close Grid button
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
-                                    ],
-                                  ),
-                                  child: IconButton(
-                                    icon: Stack(
-                                      children: [
-                                        const Icon(Icons.grid_view_outlined, color: Color(0xFF1E293B)),
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: Container(
-                                            color: Colors.white,
-                                            child: const Icon(Icons.close, color: Colors.red, size: 12),
-                                          ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: _isMoveMode
+                                  ? [
+                                    // MOVE MODE HEADER
+                                    // Left: Back arrow
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Container(
+                                        height: 44,
+                                        width: 44,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                          ],
                                         ),
-                                      ],
+                                        child: IconButton(
+                                          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B), size: 20),
+                                          onPressed: () {
+                                            setState(() {
+                                              _isMoveMode = false;
+                                            });
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _showGridMenu = false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            // Menu Items
-                            Container(
-                              constraints: BoxConstraints(
-                                maxHeight: isDesktop ? 350 : size.height * 0.38,
-                              ),
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                clipBehavior: Clip.none,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _buildMenuListItem(Icons.description_outlined, 'Announcements', '12 posts'),
-                                    const SizedBox(height: 8),
-                                    _buildMenuListItem(Icons.grid_view_outlined, 'Study Resources', '6 buttons'),
-                                    const SizedBox(height: 8),
-                                    _buildMenuListItem(Icons.link, 'Open Registration', null),
-                                    const SizedBox(height: 8),
-                                    _buildMenuListItem(Icons.description_outlined, 'FAQs', '8 posts', isHidden: true),
-                                    if (_isEditMode) ...[
-                                      const SizedBox(height: 8),
-                                      DottedBorder(
-                                        options: const RoundedRectDottedBorderOptions(
-                                          color: Color(0xFF7C3AED),
-                                          strokeWidth: 2.0,
-                                          dashPattern: [8, 4],
-                                          radius: Radius.circular(16),
+                                    // Center: "Edit mode" dashed pill
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: DottedBorder(
+                                        options: RoundedRectDottedBorderOptions(
+                                          radius: const Radius.circular(20),
+                                          color: const Color(0xFF7C3AED).withOpacity(0.5),
+                                          strokeWidth: 1.5,
+                                          dashPattern: const [4, 4],
                                           padding: EdgeInsets.zero,
                                         ),
                                         child: Container(
-                                          width: double.infinity,
-                                          height: 52,
+                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFF8FAFC),
-                                            borderRadius: BorderRadius.circular(16),
+                                            color: Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20),
                                           ),
-                                          child: const Center(
-                                            child: Icon(Icons.add, color: Color(0xFF7C3AED)),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                width: 7,
+                                                height: 7,
+                                                decoration: const BoxDecoration(
+                                                  color: Color(0xFF7C3AED),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              const Text(
+                                                'Edit mode',
+                                                style: TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                  color: Color(0xFF7C3AED),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ],
-                                ),
+                                    ),
+                                    // Right: X (cancel) and ✓ (confirm)
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _isMoveMode = false;
+                                              });
+                                            },
+                                            child: const Icon(Icons.close, color: Color(0xFF64748B), size: 24),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _isMoveMode = false;
+                                              });
+                                            },
+                                            child: Container(
+                                              height: 40,
+                                              width: 40,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFF7C3AED),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.check, color: Colors.white, size: 22),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]
+                                  : [
+                                    // Action buttons (Back and Edit)
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                        if (_currentSubMenu != null) ...[
+                                          Container(
+                                            height: 44,
+                                            width: 44,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                              ],
+                                            ),
+                                            child: IconButton(
+                                              icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _currentSubMenu = null;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                        ],
+                                        Container(
+                                          height: 44,
+                                          width: 44,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                            ],
+                                          ),
+                                          child: _isEditMode
+                                              ? Theme(
+                                                  data: Theme.of(context).copyWith(
+                                                    splashColor: Colors.transparent,
+                                                    highlightColor: Colors.black.withOpacity(0.05),
+                                                  ),
+                                                  child: PopupMenuButton<String>(
+                                                    icon: const Icon(Icons.more_vert, color: Color(0xFF1E293B)),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(20),
+                                                    ),
+                                                    color: Colors.white,
+                                                    elevation: 10,
+                                                    shadowColor: Colors.black.withOpacity(0.2),
+                                                    offset: const Offset(0, 48),
+                                                    onSelected: (value) {
+                                                      if (value == 'move') {
+                                                        setState(() {
+                                                          _isMoveMode = true;
+                                                        });
+                                                      }
+                                                    },
+                                                    itemBuilder: (context) => [
+                                                      PopupMenuItem(
+                                                        value: 'move',
+                                                        height: 50,
+                                                        child: Row(
+                                                          children: const [
+                                                            Icon(Icons.dashboard_customize_outlined, color: Color(0xFF0F172A), size: 22),
+                                                            SizedBox(width: 14),
+                                                            Text('Move', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 16, color: Color(0xFF0F172A))),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'select',
+                                                        height: 50,
+                                                        child: Row(
+                                                          children: const [
+                                                            Icon(Icons.checklist, color: Color(0xFF0F172A), size: 22),
+                                                            SizedBox(width: 14),
+                                                            Text('Select', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 16, color: Color(0xFF0F172A))),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'create',
+                                                        height: 50,
+                                                        child: Row(
+                                                          children: const [
+                                                            Icon(Icons.add_box_outlined, color: Color(0xFF0F172A), size: 22),
+                                                            SizedBox(width: 14),
+                                                            Text('Create post', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 16, color: Color(0xFF0F172A))),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : IconButton(
+                                                  icon: const Icon(Icons.edit_outlined, color: Color(0xFF1E293B)),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _isEditMode = true;
+                                                    });
+                                                  },
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  
+                                  // Center Submenu title
+                                  if (_currentSubMenu != null)
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: DottedBorder(
+                                        options: RoundedRectDottedBorderOptions(
+                                          radius: const Radius.circular(20),
+                                          color: const Color(0xFF6366F1).withOpacity(0.5), // Soft Indigo border
+                                          strokeWidth: 1.5,
+                                          dashPattern: const [4, 4],
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                        child: Container(
+                                          width:125,
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEEF2FF), // Light indigo background
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            '$_currentSubMenu...',
+                                            style: const TextStyle(
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                              color: Color(0xFF4F46E5), // Indigo text
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                  // Right Pill (Home and Close Grid)
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Container(
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(24),
+                                        boxShadow: [
+                                          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          if (_currentSubMenu != null) ...[
+                                            IconButton(
+                                              icon: const Icon(Icons.home_outlined, color: Color(0xFF1E293B)),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _currentSubMenu = null;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                          IconButton(
+                                            icon: Stack(
+                                              children: [
+                                                const Icon(Icons.grid_view_outlined, color: Color(0xFF1E293B)),
+                                                Positioned(
+                                                  bottom: 0,
+                                                  right: 0,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(2),
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.white,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: const Icon(Icons.close, size: 10, color: Colors.red),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _showGridMenu = false;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               ],
@@ -627,14 +984,77 @@ class _ChannelPageState extends State<ChannelPage> {
     );
   }
 
-  Widget _buildMenuListItem(IconData icon, String title, String? subtitle, {bool isHidden = false}) {
+  Widget _buildMoveListItem(IconData icon, String title, String? subtitle, {required int index, bool isHidden = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF94A3B8), size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 13,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (isHidden)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Icon(Icons.visibility_off_outlined, color: const Color(0xFFCBD5E1), size: 18),
+            ),
+          ReorderableDragStartListener(
+            index: index,
+            child: const Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Icon(Icons.drag_indicator, color: Color(0xFF94A3B8), size: 22),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuListItem(IconData icon, String title, String? subtitle, {bool isHidden = false, VoidCallback? onTap}) {
     if (_isEditMode) {
       return Row(
         children: [
           Expanded(
             flex: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -678,6 +1098,7 @@ class _ChannelPageState extends State<ChannelPage> {
                 ],
               ),
             ),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -706,16 +1127,18 @@ class _ChannelPageState extends State<ChannelPage> {
       );
     }
     
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2)),
-        ],
-      ),
-      child: Stack(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Stack(
         alignment: Alignment.center,
         children: [
           Align(
@@ -748,6 +1171,7 @@ class _ChannelPageState extends State<ChannelPage> {
             ],
           ),
         ],
+      ),
       ),
     );
   }
