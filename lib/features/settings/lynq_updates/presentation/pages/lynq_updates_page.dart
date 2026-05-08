@@ -21,7 +21,7 @@ class LynqUpdatesPage extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -73,7 +73,7 @@ class LynqUpdatesPage extends StatelessWidget {
                           child: Icon(
                             Icons.play_arrow,
                             size: 64,
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
                         )
                       : null,

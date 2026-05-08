@@ -41,7 +41,7 @@ class _SignInPageState extends State<SignInPage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     offset: const Offset(0, 2),
                     blurRadius: 10,
                   ),
@@ -72,7 +72,6 @@ class _SignInPageState extends State<SignInPage> {
           }
         },
         builder: (context, state) {
-          final topPadding = MediaQuery.of(context).padding.top;
           final bottomPadding = MediaQuery.of(context).padding.bottom;
 
           return SafeArea(
@@ -333,4 +332,3 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 }
-

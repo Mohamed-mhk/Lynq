@@ -16,7 +16,7 @@ class _ChannelPageState extends State<ChannelPage> {
   String? _currentSubMenu;
 
   // Reorderable menu items data
-  List<Map<String, dynamic>> _rootMenuItems = [
+  final List<Map<String, dynamic>> _rootMenuItems = [
     {'icon': Icons.description_outlined, 'title': 'Announcements', 'subtitle': '12 posts', 'isHidden': false},
     {'icon': Icons.grid_view_outlined, 'title': 'Study Resources', 'subtitle': '6 buttons', 'isHidden': false},
     {'icon': Icons.link, 'title': 'Open Registration', 'subtitle': null, 'isHidden': false},
@@ -45,7 +45,7 @@ class _ChannelPageState extends State<ChannelPage> {
             boxShadow: [
               if (isDesktop)
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 30,
                   spreadRadius: 5,
                   offset: const Offset(0, 10),
@@ -74,7 +74,7 @@ class _ChannelPageState extends State<ChannelPage> {
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -176,7 +176,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
+                                    color: Colors.black.withValues(alpha: 0.04),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   ),
@@ -226,7 +226,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
+                                      color: Colors.black.withValues(alpha: 0.04),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -323,7 +323,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                           ),
                                           SizedBox(height: 4),
                                           Text(
-                                            '2.4 MB · PDF Document',
+                                            '2.4 MB Â· PDF Document',
                                             style: TextStyle(
                                               fontFamily: 'Inter',
                                               fontSize: 13,
@@ -411,7 +411,7 @@ class _ChannelPageState extends State<ChannelPage> {
                     clipBehavior: Clip.antiAlias,
                     decoration: const ShapeDecoration(
                       color: Colors.white,
-                      shape: const RoundedRectangleBorder(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
                       ),
                       shadows: [
@@ -459,7 +459,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                   return Material(
                                     color: Colors.transparent,
                                     elevation: 6,
-                                    shadowColor: Colors.black.withOpacity(0.15),
+                                    shadowColor: Colors.black.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(16),
                                     child: child,
                                   );
@@ -581,8 +581,8 @@ class _ChannelPageState extends State<ChannelPage> {
                                     end: Alignment.bottomCenter,
                                     colors: [
                                       Colors.white,
-                                      Colors.white.withOpacity(0.9),
-                                      Colors.white.withOpacity(0.0),
+                                      Colors.white.withValues(alpha: 0.9),
+                                      Colors.white.withValues(alpha: 0.0),
                                     ],
                                     stops: const [0.0, 0.6, 1.0],
                                   ),
@@ -612,7 +612,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                           color: Colors.white,
                                           shape: BoxShape.circle,
                                           boxShadow: [
-                                            BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                            BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 4)),
                                           ],
                                         ),
                                         child: IconButton(
@@ -631,7 +631,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                       child: DottedBorder(
                                         options: RoundedRectDottedBorderOptions(
                                           radius: const Radius.circular(20),
-                                          color: const Color(0xFF7C3AED).withOpacity(0.5),
+                                          color: const Color(0xFF7C3AED).withValues(alpha: 0.5),
                                           strokeWidth: 1.5,
                                           dashPattern: const [4, 4],
                                           padding: EdgeInsets.zero,
@@ -668,7 +668,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                         ),
                                       ),
                                     ),
-                                    // Right: X (cancel) and ✓ (confirm)
+                                    // Right: X (cancel) and âœ“ (confirm)
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: Row(
@@ -718,7 +718,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                               color: Colors.white,
                                               shape: BoxShape.circle,
                                               boxShadow: [
-                                                BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                                BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 4)),
                                               ],
                                             ),
                                             child: IconButton(
@@ -739,14 +739,14 @@ class _ChannelPageState extends State<ChannelPage> {
                                             color: Colors.white,
                                             shape: BoxShape.circle,
                                             boxShadow: [
-                                              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                              BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 4)),
                                             ],
                                           ),
                                           child: _isEditMode
                                               ? Theme(
                                                   data: Theme.of(context).copyWith(
                                                     splashColor: Colors.transparent,
-                                                    highlightColor: Colors.black.withOpacity(0.05),
+                                                    highlightColor: Colors.black.withValues(alpha: 0.05),
                                                   ),
                                                   child: PopupMenuButton<String>(
                                                     icon: const Icon(Icons.more_vert, color: Color(0xFF1E293B)),
@@ -755,7 +755,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                                     ),
                                                     color: Colors.white,
                                                     elevation: 10,
-                                                    shadowColor: Colors.black.withOpacity(0.2),
+                                                    shadowColor: Colors.black.withValues(alpha: 0.2),
                                                     offset: const Offset(0, 48),
                                                     onSelected: (value) {
                                                       if (value == 'move') {
@@ -821,7 +821,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                       child: DottedBorder(
                                         options: RoundedRectDottedBorderOptions(
                                           radius: const Radius.circular(20),
-                                          color: const Color(0xFF6366F1).withOpacity(0.5), // Soft Indigo border
+                                          color: const Color(0xFF6366F1).withValues(alpha: 0.5), // Soft Indigo border
                                           strokeWidth: 1.5,
                                           dashPattern: const [4, 4],
                                           padding: EdgeInsets.zero,
@@ -857,7 +857,7 @@ class _ChannelPageState extends State<ChannelPage> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(24),
                                         boxShadow: [
-                                          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
+                                          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 4)),
                                         ],
                                       ),
                                       child: Row(
@@ -934,7 +934,7 @@ class _ChannelPageState extends State<ChannelPage> {
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -992,7 +992,7 @@ class _ChannelPageState extends State<ChannelPage> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 2)),
         ],
       ),
       child: Row(
@@ -1135,7 +1135,7 @@ class _ChannelPageState extends State<ChannelPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 2)),
           ],
         ),
         child: Stack(
@@ -1189,7 +1189,7 @@ class MenuCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 20,
             spreadRadius: 2,
             offset: const Offset(0, 8),
@@ -1250,7 +1250,7 @@ class BottomPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

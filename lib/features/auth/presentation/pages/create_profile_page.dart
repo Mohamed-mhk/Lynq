@@ -61,7 +61,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     offset: const Offset(0, 2),
                     blurRadius: 10,
                   ),
@@ -126,7 +126,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                   width: 48,
                                   height: 48,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2), // Lighter circle inside
+                                    color: Colors.white.withValues(alpha: 0.2), // Lighter circle inside
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Center(

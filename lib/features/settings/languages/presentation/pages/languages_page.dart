@@ -30,7 +30,7 @@ class _LanguagesPageState extends State<LanguagesPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -135,11 +135,11 @@ class _LanguagesPageState extends State<LanguagesPage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.black,
+            activeThumbColor: Colors.black,
             activeTrackColor: Colors.white,
             inactiveThumbColor: Colors.grey,
             inactiveTrackColor: Colors.white,
-            trackOutlineColor: MaterialStateProperty.resolveWith(
+            trackOutlineColor: WidgetStateProperty.resolveWith(
               (states) => Colors.transparent,
             ),
           ),

@@ -11,7 +11,6 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        // No back arrow per the user's instructions
         automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
@@ -24,14 +23,14 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8.0, top: 4.0, bottom: 4.0),
+            padding: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -44,24 +43,21 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 16.0, top: 4.0, bottom: 4.0),
+            padding: const EdgeInsets.only(right: 16, top: 4, bottom: 4),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
                 ],
               ),
               child: IconButton(
-                icon: const Icon(
-                  Icons.reply,
-                  color: Colors.black,
-                ), // Using reply as share for similarity
+                icon: const Icon(Icons.reply, color: Colors.black),
                 onPressed: () {},
               ),
             ),
@@ -69,7 +65,7 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -79,22 +75,20 @@ class ProfilePage extends StatelessWidget {
                 height: 140,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF0D47A1), // Deep blue bg
+                  color: const Color(0xFF0D47A1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.4),
+                      color: Colors.blue.withValues(alpha: 0.4),
                       blurRadius: 40,
                       spreadRadius: 10,
                     ),
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(
-                    24.0,
-                  ), // Padding to make image smaller inside the blue circle
+                  padding: const EdgeInsets.all(24),
                   child: ClipOval(
                     child: Container(
-                      color: Colors.grey[300], // Mocking the inside image
+                      color: Colors.grey[300],
                       child: const Icon(
                         Icons.person,
                         size: 60,
@@ -108,6 +102,7 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             const Text(
               'Mohamad Ayad',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -183,7 +178,7 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   _buildPostListItem(
-                    title: 'محاضرات الاسبوع',
+                    title: 'محاضرات الأسبوع',
                     subtitle: '14 posts',
                   ),
                   const Divider(
@@ -192,13 +187,13 @@ class ProfilePage extends StatelessWidget {
                     indent: 80,
                   ),
                   _buildPostListItem(
-                    title: 'محاضرات الاسبوع',
+                    title: 'محاضرات الأسبوع',
                     subtitle: '30 posts',
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 100), // Padding for bottom nav bar
+            const SizedBox(height: 120),
           ],
         ),
       ),
@@ -211,16 +206,14 @@ class ProfilePage extends StatelessWidget {
     required bool isFirst,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
           Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: isFirst
-                  ? const Color(0xFF1E3A8A)
-                  : Colors.transparent, // Dark blue for first
+              color: isFirst ? const Color(0xFF1E3A8A) : Colors.transparent,
               shape: BoxShape.circle,
             ),
             child: isFirst
@@ -242,6 +235,11 @@ class ProfilePage extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textDirection: title == 'مواد الثالثة'
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -250,6 +248,8 @@ class ProfilePage extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -259,18 +259,23 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Study',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'Study',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
             ),
           ),
@@ -281,9 +286,12 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPostListItem({required String title, required String subtitle}) {
+  Widget _buildPostListItem({
+    required String title,
+    required String subtitle,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
           Container(
@@ -306,6 +314,9 @@ class ProfilePage extends StatelessWidget {
               children: [
                 Text(
                   title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textDirection: TextDirection.rtl,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -314,6 +325,8 @@ class ProfilePage extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

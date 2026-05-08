@@ -45,7 +45,7 @@ class _AccountPageState extends State<AccountPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -75,7 +75,7 @@ class _AccountPageState extends State<AccountPage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
@@ -313,7 +313,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -380,7 +380,7 @@ class _AccountPageState extends State<AccountPage> {
                     TextButton(
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        overlayColor: const Color(0xFF8B5CF6).withOpacity(0.1),
+                        overlayColor: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                       ),
                       onPressed: onConfirm,
                       child: Text(

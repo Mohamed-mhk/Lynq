@@ -30,7 +30,7 @@ class _ViewPageState extends State<ViewPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -185,7 +185,7 @@ class _ViewPageState extends State<ViewPage> {
                             activeTrackColor: Colors.black,
                             inactiveTrackColor: Colors.grey.shade400,
                             thumbColor: Colors.black,
-                            overlayColor: Colors.black.withOpacity(0.1),
+                            overlayColor: Colors.black.withValues(alpha: 0.1),
                             trackHeight: 2.0,
                           ),
                           child: Slider(
@@ -265,7 +265,7 @@ class _ViewPageState extends State<ViewPage> {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                   ),
                 ],

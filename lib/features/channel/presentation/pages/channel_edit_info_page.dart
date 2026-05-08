@@ -20,7 +20,7 @@ class ChannelEditInfoPage extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -73,7 +73,7 @@ class ChannelEditInfoPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.4),
+                    color: Colors.blue.withValues(alpha: 0.4),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -84,14 +84,14 @@ class ChannelEditInfoPage extends StatelessWidget {
                   Positioned(
                     left: -40,
                     top: -20,
-                    child: Icon(Icons.settings, color: Colors.cyanAccent.withOpacity(0.5), size: 240),
+                    child: Icon(Icons.settings, color: Colors.cyanAccent.withValues(alpha: 0.5), size: 240),
                   ),
                   Center(
                     child: Container(
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.image_outlined, color: Colors.white, size: 20),
